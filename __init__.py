@@ -6,7 +6,8 @@ import requests
 import skygear
 
 FB_VERIFY = os.getenv('FB_VERIFY')
-CHIMA_TOKEN = os.getenv('CHIMA_TOKEN')
+CHIMA_TOKEN = os.getenv('CHIMA_TOKEN')  # recipient id 485312118265263
+OURSKY_TOKEN = os.getenv('OURSKY_TOKEN')  # recipient id 31563091484
 
 log = logging.getLogger(__name__)
 
