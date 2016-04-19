@@ -5,11 +5,17 @@ import json
 import requests
 import skygear
 
+from .landing import oursky_welcome
+
+
 FB_VERIFY = os.getenv('FB_VERIFY')
 CHIMA_TOKEN = os.getenv('CHIMA_TOKEN')  # recipient id 485312118265263
 OURSKY_TOKEN = os.getenv('OURSKY_TOKEN')  # recipient id 31563091484
 
 log = logging.getLogger(__name__)
+
+# Init the facebook landing
+oursky_welcome()
 
 
 @skygear.handler('chima')
