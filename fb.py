@@ -46,7 +46,7 @@ class FacebookBot():
 class FBRegistry:
     def __init__(self, path, skygear_registry=get_registry()):
         self.fb_verify = os.getenv('FB_TOKEN')
-        self.root = None
+        self.root = {}
         self.postback = {}
         self.skygear_registry = skygear_registry
         self.skygear_registry.register(
@@ -56,9 +56,11 @@ class FBRegistry:
 
     def register(self, func, recipient_id, postback):
         if postback is not None:
-            self.postback[postback] = func
+            if recipient_id not in self.postback:
+                self.postback[recipient_id] = {}
+            self.postback[recipient_id][postback] = func
         else:
-            self.root = func
+            self.root[recipient_id] = func
 
     def verify(self, request):
         if request.values.get('hub.verify_token') == self.fb_verify:
@@ -71,7 +73,13 @@ class FBRegistry:
         body = request.get_data(as_text=True)
         payload = json.loads(body)
         log.info(payload)
-        self.root(payload)
+        events = payload['entry'][0]['messaging']
+        for evt in events:
+            recipient_id = evt['recipient']['id']
+            if recipient_id in self.root:
+                return self.root[recipient_id](evt)
+            else:
+                return self.root['*'](evt)
 
 
 _fb_registry = {}

@@ -17,28 +17,49 @@ log = logging.getLogger(__name__)
 oursky_welcome()
 
 
-@messager_handler('chima')
-def echo(payload):
-    events = payload['entry'][0]['messaging']
-    for evt in events:
-        sender = evt['sender']['id']
-        if 'message' in evt:
-            msg = evt['message']
-            r = requests.post(
-                'https://graph.facebook.com/v2.6/me/messages',
-                params={
-                    'access_token': CHIMA_TOKEN
+@messager_handler('chima', recipient_id=485312118265263)
+def echo(evt):
+    sender = evt['sender']['id']
+    if 'message' in evt:
+        msg = evt['message']
+        r = requests.post(
+            'https://graph.facebook.com/v2.6/me/messages',
+            params={
+                'access_token': CHIMA_TOKEN
+            },
+            json={
+                'recipient': {
+                    'id': sender
                 },
-                json={
-                    'recipient': {
-                        'id': sender
-                    },
-                    'message': {
-                        'text': msg['text']
-                    }
+                'message': {
+                    'text': msg['text']
                 }
-            )
-            log.info(r.json())
-        else:
-            log.info('Cannot handle')
+            }
+        )
+        log.info(r.json())
+    else:
+        log.info('Cat cannot handle')
 
+
+@messager_handler('chima')
+def none_here(evt):
+    sender = evt['sender']['id']
+    if 'message' in evt:
+        msg = evt['message']
+        r = requests.post(
+            'https://graph.facebook.com/v2.6/me/messages',
+            params={
+                'access_token': OURSKY_TOKEN
+            },
+            json={
+                'recipient': {
+                    'id': sender
+                },
+                'message': {
+                    'text': 'Please email to info@oursky.com'
+                }
+            }
+        )
+        log.info(r.json())
+    else:
+        log.info('Cat cannot handle')
