@@ -63,3 +63,69 @@ def none_here(evt):
         log.info(r.json())
     else:
         log.info('Cat cannot handle')
+
+
+@messager_handler('chima', recipient_id=31563091484, postback='web_or_app')
+def web_or_app(evt):
+    sender = evt['sender']['id']
+    msg = 'Can you briefly describe your idea?'
+    r = requests.post(
+        'https://graph.facebook.com/v2.6/me/messages',
+        params={
+            'access_token': OURSKY_TOKEN
+        },
+        json={
+            'recipient': {
+                'id': sender
+            },
+            'message': {
+                'text': msg
+            }
+        }
+    )
+    log.info(r.json())
+    return 'ok'
+
+
+@messager_handler('chima', recipient_id=31563091484, postback='message_bot')
+def message_bot(evt):
+    sender = evt['sender']['id']
+    msg = 'Interesting! Which company / business are you from?'
+    r = requests.post(
+        'https://graph.facebook.com/v2.6/me/messages',
+        params={
+            'access_token': OURSKY_TOKEN
+        },
+        json={
+            'recipient': {
+                'id': sender
+            },
+            'message': {
+                'text': msg
+            }
+        }
+    )
+    log.info(r.json())
+    return 'ok'
+
+
+@messager_handler('chima', recipient_id=31563091484, postback='other_enquiry')
+def other_enquiry(evt):
+    sender = evt['sender']['id']
+    msg = 'Can you briefly describe your needs?'
+    r = requests.post(
+        'https://graph.facebook.com/v2.6/me/messages',
+        params={
+            'access_token': OURSKY_TOKEN
+        },
+        json={
+            'recipient': {
+                'id': sender
+            },
+            'message': {
+                'text': msg
+            }
+        }
+    )
+    log.info(r.json())
+    return 'ok'

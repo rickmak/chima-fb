@@ -62,6 +62,14 @@ class FBRegistry:
         else:
             self.root[recipient_id] = func
 
+    def get_postback_func(self, recipient_id, postback):
+        if recipient_id in self.postback:
+            if postback in self.postback[recipient_id]:
+                return self.postback[recipient_id][postback]
+        if postback in self.postback['*']:
+            return self.postback['*'][postback]
+        return None
+        
     def verify(self, request):
         verify_token = request.values.get('hub.verify_token')
         log.debug('Get facebook verify request', verify_token)
@@ -77,7 +85,13 @@ class FBRegistry:
         log.debug(payload)
         events = payload['entry'][0]['messaging']
         for evt in events:
+            # Most specific match come first
             recipient_id = evt['recipient']['id']
+            if 'postback' in evt:
+                postback = evt['postback']['payload']
+                func = self.get_postback_func(recipient_id, postback)
+                if func is not None:
+                    func(evt)
             if recipient_id in self.root:
                 return self.root[recipient_id](evt)
             else:
