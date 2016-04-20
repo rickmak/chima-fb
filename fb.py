@@ -40,7 +40,7 @@ class FacebookBot():
                 "thread_state": "new_thread"
             }
         )
-        log.info(r.json())
+        log.debug(r.json())
 
 
 class FBRegistry:
@@ -63,16 +63,18 @@ class FBRegistry:
             self.root[recipient_id] = func
 
     def verify(self, request):
-        if request.values.get('hub.verify_token') == self.fb_verify:
+        verify_token = request.values.get('hub.verify_token')
+        log.debug('Get facebook verify request', verify_token)
+        if verify_token == self.fb_verify:
             return request.values.get('hub.challenge')
         else:
             return 'You are not facebook'
 
     def handler(self, request):
-        log.info('Got message from facebook')
+        log.debug('Got message from facebook')
         body = request.get_data(as_text=True)
         payload = json.loads(body)
-        log.info(payload)
+        log.debug(payload)
         events = payload['entry'][0]['messaging']
         for evt in events:
             recipient_id = evt['recipient']['id']
