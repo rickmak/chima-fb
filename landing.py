@@ -12,25 +12,25 @@ oursky_fb = FacebookBot(
 
 def oursky_welcome():
     message = {
-        "title": """Want us to design your app idea or develop your own
-        messenger bot? We’re here to help!""",
-        "subtitle": "Welcome to Oursky! How may we help today?",
+        "title": """Welcome to Oursky!""",
+        "subtitle": """We're a team of 40 app designers and developers based in
+        Hong Kong, How may we help today?""",
         "image_url": "https://oursky.com/img/logo-square.png",
         "item_url": "https://oursky.com",
         "buttons": [
             {
                 "payload": "web_or_app",
-                "title": "Design a web / mobile app",
+                "title": "Design an app",
                 "type": "postback"
             },
             {
                 "payload": "message_bot",
-                "title": "Build a Messenger Bot",
+                "title": "Build my FB Bot",
                 "type": "postback"
             },
             {
                 "payload": "other_enquiry",
-                "title": "Other development enquiry",
+                "title": "Other enquiry",
                 "type": "postback"
             }
         ]
