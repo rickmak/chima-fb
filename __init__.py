@@ -3,10 +3,9 @@ import logging
 import json
 
 import requests
-import skygear
 
 from .landing import oursky_welcome
-
+from .fb import messager_handler
 
 FB_VERIFY = os.getenv('FB_VERIFY')
 CHIMA_TOKEN = os.getenv('CHIMA_TOKEN')  # recipient id 485312118265263
@@ -18,20 +17,8 @@ log = logging.getLogger(__name__)
 oursky_welcome()
 
 
-@skygear.handler('chima')
-def verify(request, method=['GET']):
-    if request.values.get('hub.verify_token') == FB_VERIFY:
-        return request.values.get('hub.challenge')
-    else:
-        return 'You are not facebook'
-
-
-@skygear.handler('chima')
-def echo(request, method=['POST']):
-    log.info('Got message from facebook')
-    body = request.get_data(as_text=True)
-    payload = json.loads(body)
-    log.info(payload)
+@messager_handler('chima')
+def echo(payload):
     events = payload['entry'][0]['messaging']
     for evt in events:
         sender = evt['sender']['id']

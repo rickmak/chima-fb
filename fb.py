@@ -1,5 +1,9 @@
+import json
 import logging
+import os
+
 import requests
+from skygear.registry import get_registry
 
 log = logging.getLogger(__name__)
 
@@ -37,3 +41,53 @@ class FacebookBot():
             }
         )
         log.info(r.json())
+
+
+class FBRegistry:
+    def __init__(self, path, skygear_registry=get_registry()):
+        self.fb_verify = os.getenv('FB_TOKEN')
+        self.root = None
+        self.postback = {}
+        self.skygear_registry = skygear_registry
+        self.skygear_registry.register(
+            'handler', path, self.verify, method=['GET'])
+        self.skygear_registry.register(
+            'handler', path, self.handler, method=['POST'])
+
+    def register(self, func, recipient_id, postback):
+        if postback is not None:
+            self.postback[postback] = func
+        else:
+            self.root = func
+
+    def verify(self, request):
+        if request.values.get('hub.verify_token') == self.fb_verify:
+            return request.values.get('hub.challenge')
+        else:
+            return 'You are not facebook'
+
+    def handler(self, request):
+        log.info('Got message from facebook')
+        body = request.get_data(as_text=True)
+        payload = json.loads(body)
+        log.info(payload)
+        self.root(payload)
+
+
+_fb_registry = {}
+
+
+def messager_handler(path, recipient_id='*', postback=None):
+    if path not in _fb_registry:
+        _fb_registry[path] = FBRegistry(path)
+    registery = _fb_registry[path]
+    def handler(func):
+        registery.register(
+            func,
+            recipient_id,
+            postback
+        )
+        log.debug('Registered message handler %s, %s, %s',
+              path, recipient_id, postback)
+        return func
+    return handler
