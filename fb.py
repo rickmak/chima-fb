@@ -45,7 +45,7 @@ class FacebookBot():
 
 class FBRegistry:
     def __init__(self, path, skygear_registry=get_registry()):
-        self.fb_verify = os.getenv('FB_TOKEN')
+        self.fb_verify = os.getenv('FB_VERIFY')
         self.root = {}
         self.postback = {}
         self.skygear_registry = skygear_registry
@@ -98,16 +98,37 @@ class FBRegistry:
                 return self.root['*'](evt)
 
 
+class FBPostman:
+    def __init__(self, token):
+        self.token = token
+
+    def message(self, sender, message):
+        return requests.post(
+            'https://graph.facebook.com/v2.6/me/messages',
+            params={
+                'access_token': self.token 
+            },
+            json={
+                'recipient': {
+                    'id': sender
+                },
+                'message': {
+                    'text': message
+                }
+            }
+        )
+
 _fb_registry = {}
 
 
-def messager_handler(path, recipient_id='*', postback=None):
+def messager_handler(path, recipient_id='*', postback=None, token=None):
     if path not in _fb_registry:
         _fb_registry[path] = FBRegistry(path)
     registery = _fb_registry[path]
     def handler(func):
+        _func = with_postman(func, token)
         registery.register(
-            func,
+            _func,
             recipient_id,
             postback
         )
@@ -115,3 +136,12 @@ def messager_handler(path, recipient_id='*', postback=None):
               path, recipient_id, postback)
         return func
     return handler
+
+
+def with_postman(func, token):
+    if token is None:
+        token = os.getenv('FB_TOKEN')
+    postman = FBPostman(token)
+    def wrapper(evt):
+        return func(evt, postman)
+    return wrapper

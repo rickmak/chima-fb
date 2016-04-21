@@ -7,7 +7,6 @@ import requests
 from .landing import oursky_welcome
 from .fb import messager_handler
 
-FB_VERIFY = os.getenv('FB_VERIFY')
 CHIMA_TOKEN = os.getenv('CHIMA_TOKEN')  # recipient id 485312118265263
 OURSKY_TOKEN = os.getenv('OURSKY_TOKEN')  # recipient id 31563091484
 
@@ -17,115 +16,50 @@ log = logging.getLogger(__name__)
 oursky_welcome()
 
 
-@messager_handler('chima', recipient_id=485312118265263)
-def echo(evt):
+@messager_handler('chima', recipient_id=485312118265263, token=CHIMA_TOKEN)
+def echo(evt, postman):
     sender = evt['sender']['id']
     if 'message' in evt:
         msg = evt['message']
-        r = requests.post(
-            'https://graph.facebook.com/v2.6/me/messages',
-            params={
-                'access_token': CHIMA_TOKEN
-            },
-            json={
-                'recipient': {
-                    'id': sender
-                },
-                'message': {
-                    'text': msg['text']
-                }
-            }
-        )
+        r = postman.message(sender, msg)
         log.info(r.json())
     else:
         log.info('Cat cannot handle')
 
 
-@messager_handler('chima')
-def none_here(evt):
+@messager_handler('chima', token=OURSKY_TOKEN)
+def none_here(evt, postman):
     sender = evt['sender']['id']
     if 'message' in evt:
         msg = evt['message']
-        r = requests.post(
-            'https://graph.facebook.com/v2.6/me/messages',
-            params={
-                'access_token': OURSKY_TOKEN
-            },
-            json={
-                'recipient': {
-                    'id': sender
-                },
-                'message': {
-                    'text': 'Please email to info@oursky.com'
-                }
-            }
-        )
+        r = postman.message(sender, msg)
         log.info(r.json())
     else:
         log.info('Cat cannot handle')
 
 
-@messager_handler('chima', recipient_id=31563091484, postback='web_or_app')
-def web_or_app(evt):
+@messager_handler('chima', recipient_id=31563091484, postback='web_or_app', token=OURSKY_TOKEN)
+def web_or_app(evt, postman):
     sender = evt['sender']['id']
     msg = 'Can you briefly describe your idea?'
-    r = requests.post(
-        'https://graph.facebook.com/v2.6/me/messages',
-        params={
-            'access_token': OURSKY_TOKEN
-        },
-        json={
-            'recipient': {
-                'id': sender
-            },
-            'message': {
-                'text': msg
-            }
-        }
-    )
+    r = postman.message(sender, msg)
     log.info(r.json())
     return 'ok'
 
 
-@messager_handler('chima', recipient_id=31563091484, postback='message_bot')
-def message_bot(evt):
+@messager_handler('chima', recipient_id=31563091484, postback='message_bot', token=OURSKY_TOKEN)
+def message_bot(evt, postman):
     sender = evt['sender']['id']
     msg = 'Interesting! Which company / business are you from?'
-    r = requests.post(
-        'https://graph.facebook.com/v2.6/me/messages',
-        params={
-            'access_token': OURSKY_TOKEN
-        },
-        json={
-            'recipient': {
-                'id': sender
-            },
-            'message': {
-                'text': msg
-            }
-        }
-    )
+    r = postman.message(sender, msg)
     log.info(r.json())
     return 'ok'
 
 
-@messager_handler('chima', recipient_id=31563091484, postback='other_enquiry')
-def other_enquiry(evt):
+@messager_handler('chima', recipient_id=31563091484, postback='other_enquiry', token=OURSKY_TOKEN)
+def other_enquiry(evt, postman):
     sender = evt['sender']['id']
     msg = 'Can you briefly describe your needs?'
-    r = requests.post(
-        'https://graph.facebook.com/v2.6/me/messages',
-        params={
-            'access_token': OURSKY_TOKEN
-        },
-        json={
-            'recipient': {
-                'id': sender
-            },
-            'message': {
-                'text': msg
-            }
-        }
-    )
+    r = postman.message(sender, msg)
     log.info(r.json())
     return 'ok'
