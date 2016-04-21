@@ -1,10 +1,36 @@
 import os
 import logging
+import uuid
 
-import skygear
+from skygear.container import SkygearContainer
+from skygear.error import SkygearException
 
 log = logging.getLogger(__name__)
 
+skygear_token = None
+
+
+def get_token():
+    global skygear_token
+    if skygear_token is not None:
+        return skygear_token
+
+    container = SkygearContainer()
+    try:
+        resp = container.send_action('auth:login', {
+            'username': os.getenv('SKYGEAR_BOT'),
+            'password': os.getenv('SKYGEAR_BOT_PW')
+        })
+    except SkygearException:
+        log.debug('New setup, registering')
+        resp = container.send_action('auth:signup', {
+            'username': os.getenv('SKYGEAR_BOT'),
+            'password': os.getenv('SKYGEAR_BOT_PW')
+        })
+    finally:
+        log.debug(resp)
+        skygear_token = resp['result']['access_token']
+    return skygear_token
 
 class OurskyBot():
     questions = {
@@ -38,16 +64,44 @@ class OurskyBot():
         self.what = 'chat'
         self.step = 0
         self.user = user
-        
+        self.container = SkygearContainer(access_token=get_token())
+        response = self.container.send_action('record:query', {
+            'record_type': 'fb_user',
+            'predicate': [
+                'eq',
+                {'$type': 'keypath', '$val': '_id'},
+                user 
+            ]
+        })
+        log.debug(response)
+        result = response['result']
+        user = result[0]
+        if user:
+            self.step = user['step']
+            self.what = user['enquiry_topic']
 
     def client_wants(self, what):
         if self.what != what:
             self.what = what
             self.step = 0
+            self.upsert_fb_user()
+
+    def upsert_fb_user(self):
+        self.container.send_action('record:save', {'records': [{
+            '_id': 'fb_user/{}'.format(self.user),
+            'enquiry_topic': self.what,
+            'step': self.step
+        }]})
 
     def listen(self, message):
         # Save to skygear
         self.step = self.step + 1
+        self.upsert_fb_user()
+        self.container.send_action('record:save', {'records': [{
+            '_id': 'fb_message/{}'.format(uuid.uuid4()),
+            'enquiry_topic': self.what,
+            'message': message
+        }]})
 
     def speak(self): 
         log.debug('Speaking %s %s', self.what, self.step)
