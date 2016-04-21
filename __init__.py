@@ -6,6 +6,7 @@ import requests
 
 from .landing import oursky_welcome
 from .fb import messager_handler
+from .bot import OurskyBot
 
 CHIMA_TOKEN = os.getenv('CHIMA_TOKEN')  # recipient id 485312118265263
 OURSKY_TOKEN = os.getenv('OURSKY_TOKEN')  # recipient id 31563091484
@@ -27,20 +28,12 @@ def echo(evt, postman):
         log.info('Cat cannot handle')
 
 
-@messager_handler('chima', token=OURSKY_TOKEN)
-def none_here(evt, postman):
-    sender = evt['sender']['id']
-    if 'message' in evt:
-        msg = evt['message']
-        r = postman.message(sender, msg)
-        log.info(r.json())
-    else:
-        log.info('Cat cannot handle')
-
-
 @messager_handler('chima', recipient_id=31563091484, postback='web_or_app', token=OURSKY_TOKEN)
 def web_or_app(evt, postman):
     sender = evt['sender']['id']
+    bot = OurskyBot(sender)
+    bot.client_wants('web_or_app')
+    msg = bot.speak()
     msg = 'Can you briefly describe your idea?'
     r = postman.message(sender, msg)
     log.info(r.json())
@@ -51,6 +44,9 @@ def web_or_app(evt, postman):
 def message_bot(evt, postman):
     sender = evt['sender']['id']
     msg = 'Interesting! Which company / business are you from?'
+    bot = OurskyBot(sender)
+    bot.client_wants('message_bot')
+    msg = bot.speak()
     r = postman.message(sender, msg)
     log.info(r.json())
     return 'ok'
@@ -60,6 +56,23 @@ def message_bot(evt, postman):
 def other_enquiry(evt, postman):
     sender = evt['sender']['id']
     msg = 'Can you briefly describe your needs?'
+    bot = OurskyBot(sender)
+    bot.client_wants('other_enquiry')
+    msg = bot.speak()
     r = postman.message(sender, msg)
     log.info(r.json())
     return 'ok'
+
+
+@messager_handler('chima', recipient_id=31563091484, token=OURSKY_TOKEN)
+def message_to_oursky(evt, postman):
+    sender = evt['sender']['id']
+    bot = OurskyBot(sender)
+    if 'message' in evt:
+        msg = evt['message']
+        bot.listen(msg)
+        response = bot.speak()
+        r = postman.message(sender, response)
+        log.info(r.json())
+    else:
+        log.info('Cat cannot handle')
