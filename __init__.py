@@ -22,7 +22,7 @@ def echo(evt, postman):
     sender = evt['sender']['id']
     if 'message' in evt:
         msg = evt['message']
-        r = postman.send(sender, msg)
+        r = postman.send(sender, msg['text'])
         log.info(r.json())
     else:
         log.info('Cat cannot handle')
