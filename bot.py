@@ -116,10 +116,14 @@ class OurskyBot():
         })
         log.debug(response)
         result = response['result']
-        user = result[0]
-        if user:
-            self.step = user['step']
-            self.what = user['enquiry_topic']
+        try:
+            user = result[0]
+        except IndexError:
+            return
+        else:
+            if user:
+                self.step = user['step']
+                self.what = user['enquiry_topic']
 
     def client_wants(self, what):
         if self.what != what:
