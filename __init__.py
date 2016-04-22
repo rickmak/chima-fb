@@ -22,10 +22,10 @@ def echo(evt, postman):
     sender = evt['sender']['id']
     if 'message' in evt:
         msg = evt['message']
-        r = postman.send(sender, msg['text'])
-        log.info(r.json())
-    else:
-        log.info('Cat cannot handle')
+        if 'text' in msg:
+            r = postman.send(sender, msg['text'])
+            log.info(r.json())
+    log.info('Cat cannot handle')
 
 
 @messager_handler('chima', recipient_id=31563091484, postback='web_or_app', token=OURSKY_TOKEN)
