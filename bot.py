@@ -35,28 +35,69 @@ def get_token():
 class OurskyBot():
     questions = {
         'chat': [
-            'What free chat?, email info@oursky.com'
+            ['What free chat?, email info@oursky.com']
         ],
         'web_or_app': [
-            'Can you briefly describe your idea?',
-            'Which email shall our Project Consultant reach you at?',
-            'Great! Thank you and we will be in touch shortly.!',
-#    * Learn more about Oursky prototyping services (button, url to
-#                                                    https://oursky.com/prototype/)
+            ['Can you briefly describe your idea?'],
+            ['Which email shall our Project Consultant reach you at?'],
+            [
+                'Great! Thank you and we will be in touch shortly!',
+                {
+                    'template_type':'generic',
+                    'elements': [{
+                        'title': 'Learn more about Oursky',
+                        'subtitle': '',
+                        'image_url': 'https://oursky.com/img/logo-square.png',
+                        'buttons': [{
+                            'type': 'web_url',
+                            'url': 'https://oursky.com/prototype',
+                            'title': 'View'
+                        }]
+                    }]
+                }
+            ]
         ],
         'message_bot': [
-            'Interesting! Which company / business are you from?',
-            'How do you plan to use Messenger Bot?',
-            'Interesting! Which email shall we reach you?',
-            'Thanks! We will be in touch short!',
-#    * Learn more about Oursky (button, url to oursky.com (http://oursky.com/))
+            ['Interesting! Which company / business are you from?'],
+            ['How do you plan to use Messenger Bot?'],
+            ['Interesting! Which email shall we reach you?'],
+            [
+                'Thanks! We will be in touch short!',
+                {
+                    'template_type':'generic',
+                    'elements': [{
+                        'title': 'Learn more about Oursky',
+                        'subtitle': '',
+                        'image_url': 'https://oursky.com/img/logo-square.png',
+                        'buttons': [{
+                            'type': 'web_url',
+                            'url': 'https://oursky.com/',
+                            'title': 'View'
+                        }]
+                    }]
+                }
+            ]
         ],
         'other_enquiry': [
-            'Can you briefly describe your needs?',
-            'What is your company name?',
-            'Which email shall our Project Consultant reach you at?',
-            'Great! Thank you and we will be in touch shortly!',
-#    * Learn more about Oursky (button, url to oursky.com (http://oursky.com/))
+            ['Can you briefly describe your needs?'],
+            ['What is your company name?'],
+            ['Which email shall our Project Consultant reach you at?'],
+            [
+                'Great! Thank you and we will be in touch shortly!',
+                {
+                    'template_type':'generic',
+                    'elements': [{
+                        'title': 'Learn more about Oursky',
+                        'subtitle': '',
+                        'image_url': 'https://oursky.com/img/logo-square.png',
+                        'buttons': [{
+                            'type': 'web_url',
+                            'url': 'https://oursky.com/',
+                            'title': 'View'
+                        }]
+                    }]
+                }
+            ]
         ]
     }
 
@@ -109,5 +150,4 @@ class OurskyBot():
             return self.questions[self.what][self.step]
         except IndexError as e:
             log.warn(e)
-            return 'Please email info@oursky.com for follow up'
-
+            return ['Please email info@oursky.com for follow up']

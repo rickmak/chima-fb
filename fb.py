@@ -102,7 +102,8 @@ class FBPostman:
     def __init__(self, token):
         self.token = token
 
-    def message(self, sender, message):
+    def _send(self, sender, payload):
+        log.debug(payload)
         return requests.post(
             'https://graph.facebook.com/v2.6/me/messages',
             params={
@@ -112,11 +113,29 @@ class FBPostman:
                 'recipient': {
                     'id': sender
                 },
-                'message': {
-                    'text': message
-                }
+                'message': payload
             }
         )
+
+    def send(self, sender, payload):
+        log.debug(payload.__class__.__name__)
+        if payload.__class__.__name__ == 'str':
+            log.debug('sending text message')
+            return self.message(sender, payload)
+        else:
+            evenlop = {
+                'attachment': {
+                    'type': 'template',
+                    'payload': payload
+                }
+            }
+            return self._send(sender, evenlop)
+
+    def message(self, sender, message):
+        payload = {
+            'text': message
+        }
+        return self._send(sender, payload)
 
 _fb_registry = {}
 

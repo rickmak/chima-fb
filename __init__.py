@@ -22,7 +22,7 @@ def echo(evt, postman):
     sender = evt['sender']['id']
     if 'message' in evt:
         msg = evt['message']
-        r = postman.message(sender, msg)
+        r = postman.send(sender, msg)
         log.info(r.json())
     else:
         log.info('Cat cannot handle')
@@ -33,9 +33,10 @@ def web_or_app(evt, postman):
     sender = evt['sender']['id']
     bot = OurskyBot(sender)
     bot.client_wants('web_or_app')
-    msg = bot.speak()
-    r = postman.message(sender, msg)
-    log.info(r.json())
+    messages = bot.speak()
+    for msg in messages:
+        r = postman.send(sender, msg)
+        log.info(r.json())
     return 'ok'
 
 
@@ -44,9 +45,10 @@ def message_bot(evt, postman):
     sender = evt['sender']['id']
     bot = OurskyBot(sender)
     bot.client_wants('message_bot')
-    msg = bot.speak()
-    r = postman.message(sender, msg)
-    log.info(r.json())
+    messages = bot.speak()
+    for msg in messages:
+        r = postman.send(sender, msg)
+        log.info(r.json())
     return 'ok'
 
 
@@ -55,9 +57,10 @@ def other_enquiry(evt, postman):
     sender = evt['sender']['id']
     bot = OurskyBot(sender)
     bot.client_wants('other_enquiry')
-    msg = bot.speak()
-    r = postman.message(sender, msg)
-    log.info(r.json())
+    messages = bot.speak()
+    for msg in messages:
+        r = postman.send(sender, msg)
+        log.info(r.json())
     return 'ok'
 
 
@@ -68,8 +71,9 @@ def message_to_oursky(evt, postman):
     if 'message' in evt:
         msg = evt['message']
         bot.listen(msg)
-        response = bot.speak()
-        r = postman.message(sender, response)
-        log.info(r.json())
+        messages = bot.speak()
+        for msg in messages:
+            r = postman.send(sender, msg)
+            log.info(r.json())
     else:
         log.info('Cat cannot handle')
