@@ -59,10 +59,10 @@ class OurskyBot():
         ],
         'message_bot': [
             ['Interesting! Which company / business are you from?'],
-            ['How do you plan to use Messenger Bot?'],
+            ['How do you plan to use the Messenger Bot?'],
             ['Interesting! Which email shall we reach you?'],
             [
-                'Thanks! We will be in touch short!',
+                'Thanks! We will be in touch shortly!',
                 {
                     'template_type':'generic',
                     'elements': [{

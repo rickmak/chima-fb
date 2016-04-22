@@ -13,7 +13,7 @@ oursky_fb = FacebookBot(
 def oursky_welcome():
     message = {
         "title": """Welcome to Oursky!""",
-        "subtitle": """We're team of 40 app developers based in HK, How may we
+        "subtitle": """We're a team of 40 app developers based in HK, How may we
         help you?""",
         "image_url": "https://oursky.com/img/logo-square.png",
         "item_url": "https://oursky.com",
