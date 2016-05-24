@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 oursky_welcome()
 
 
-@messager_handler('chima', recipient_id=485312118265263, token=CHIMA_TOKEN)
+@messager_handler('chima', recipient_id='485312118265263', token=CHIMA_TOKEN)
 def echo(evt, postman):
     sender = evt['sender']['id']
     if 'message' in evt:
@@ -28,7 +28,7 @@ def echo(evt, postman):
     log.info('Cat cannot handle')
 
 
-@messager_handler('chima', recipient_id=31563091484, postback='web_or_app', token=OURSKY_TOKEN)
+@messager_handler('chima', recipient_id='31563091484', postback='web_or_app', token=OURSKY_TOKEN)
 def web_or_app(evt, postman):
     sender = evt['sender']['id']
     bot = OurskyBot(sender)
@@ -40,7 +40,7 @@ def web_or_app(evt, postman):
     return 'ok'
 
 
-@messager_handler('chima', recipient_id=31563091484, postback='message_bot', token=OURSKY_TOKEN)
+@messager_handler('chima', recipient_id='31563091484', postback='message_bot', token=OURSKY_TOKEN)
 def message_bot(evt, postman):
     sender = evt['sender']['id']
     bot = OurskyBot(sender)
@@ -52,7 +52,7 @@ def message_bot(evt, postman):
     return 'ok'
 
 
-@messager_handler('chima', recipient_id=31563091484, postback='other_enquiry', token=OURSKY_TOKEN)
+@messager_handler('chima', recipient_id='31563091484', postback='other_enquiry', token=OURSKY_TOKEN)
 def other_enquiry(evt, postman):
     sender = evt['sender']['id']
     bot = OurskyBot(sender)
@@ -64,7 +64,7 @@ def other_enquiry(evt, postman):
     return 'ok'
 
 
-@messager_handler('chima', recipient_id=31563091484, token=OURSKY_TOKEN)
+@messager_handler('chima', recipient_id='31563091484', token=OURSKY_TOKEN)
 def message_to_oursky(evt, postman):
     sender = evt['sender']['id']
     bot = OurskyBot(sender)
