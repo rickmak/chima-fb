@@ -154,4 +154,6 @@ class OurskyBot():
             return self.questions[self.what][self.step]
         except IndexError as e:
             log.warn(e)
-            return ['Please email info@oursky.com for follow up']
+            return [
+                'Thanks for your message, our team will respond to you shortly.'
+            ]
