@@ -3,6 +3,7 @@ import logging
 import json
 
 import requests
+import skygear
 
 from .landing import oursky_welcome
 from .fb import messager_handler
@@ -77,3 +78,12 @@ def message_to_oursky(evt, postman):
             log.info(r.json())
     else:
         log.info('Cat cannot handle')
+
+
+@skygear.handler('line')
+def line(request):
+    log.debug(request.headers['X-LINE-CHANNELSIGNATURE'])
+    body = request.get_data(as_text=True)
+    log.debug(body)
+    # request.values.get('size', 'too large')
+    return 'ok'
