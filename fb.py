@@ -81,6 +81,8 @@ class FBRegistry:
     def handler(self, request):
         log.debug('Got message from facebook')
         body = request.get_data(as_text=True)
+        if not body:
+            return 'No ops for empty reqest'
         payload = json.loads(body)
         log.debug(payload)
         events = payload['entry'][0]['messaging']
